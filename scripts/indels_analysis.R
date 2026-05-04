@@ -1,17 +1,17 @@
 # Download raw file from repository
 dir.create(file.path("data", "raw"), recursive = TRUE)
-url <- "https://github.com/yourusername/FOXP2_CNTNAP2_Population_Analysis/releases/download/v1.0/all-indels.vcf.gz"
+url <- "https://github.com/evalysiova/FOXP2_CNTNAP2_Population_Analysis/releases/download/v1.0/all-indels.vcf.gz"
 download.file(url, destfile = file.path("data", "raw", "all-indels.vcf.gz"))
 
 # Create directories for output plots
 output_dir <- file.path("output_indels", "figures")
-dor.create(output_dir, recursive = TRUE)
+dir.create(output_dir, recursive = TRUE)
 
 # Required R packages
-library("vcfR"); library(adegenet); library(ggplot2); library(reshape2); library(dplyr); library(pegas); library(hierfstat); library(tidyr)
+library("vcfR"); library(adegenet); library(ggplot2); library(reshape2); library(dplyr); library(pegas); library(hierfstat); library(tidyr); library(patchwork)
 
 # Pipeline
-vcf <- read.vcfR("data/raw/all-indels.vcf.gz")
+vcf <- read.vcfR(file.path("data", "raw", "all-indels.vcf.gz"))
 
 myID <- getID(vcf)
 length(unique(myID, incomparables = NA)) == length(myID)
@@ -28,12 +28,12 @@ length(unique(myID2, incomparables = NA)) == length(myID2)
 obj <- vcfR2genind(vcf)
 
 # add population info
-url <- "https://github.com/yourusername/FOXP2_CNTNAP2_Population_Analysis/releases/download/v1.0/pop.csv"
+url <- "https://github.com/evalysiova/FOXP2_CNTNAP2_Population_Analysis/releases/download/v1.0/pop.csv"
 download.file(url, destfile = file.path("data", "raw", "pop.csv"))
-csv <- read.table(file.path("data", "raw", "pop.csv", header = FALSE, sep = ",")
+csv <- read.table(file.path("data", "raw", "pop.csv"), header = FALSE, sep = ",")
 # check order of IDs
 inds <- indNames(obj)
-all(inds == csv$V3)
+all(inds == csv$V2)
 
 pop(obj) <- csv[,3]  
 obj
@@ -121,11 +121,8 @@ superpop$group <- c("3", "3", "5", "2", "5", "2", "3", "2", "4", "5", "1", "1", 
 
 pal <- colorRampPalette(c("firebrick3", "chartreuse4", "deeppink3", "cadetblue2", "darkgoldenrod2"))
 palette(pal(5))
-scatter(dapc3,xax=1,yax=2, col= superpop$group, solid=.9, scree.da=FALSE,cell=1.5, cex=1.5,
-        +         bg="white",cstar=0, legend=TRUE)
-scatter(dapc3,xax=1,yax=2, col= superpop$group, solid=.9, scree.da=FALSE,cell=2.5, cex=1.5,
-        +         bg="white",cstar=0, legend=TRUE)
-
+scatter(dapc3,xax=1,yax=2, col= superpop$group, solid=.9, scree.da=FALSE,cell=1.5, cex=1.5, bg="white",cstar=0, legend=TRUE)
+scatter(dapc3,xax=1,yax=2, col= superpop$group, solid=.9, scree.da=FALSE,cell=2.5, cex=1.5, bg="white",cstar=0, legend=TRUE)
 
 set.seed(4)
 contrib <- loadingplot(dapc3$var.contr, axis=2, thres=0.004, lab.jitter=1, lab=" ")
@@ -228,6 +225,7 @@ Hobs <- lapply(seppop(obj), function(e) mean(summary(e)$Hobs, na.rm = TRUE))
 
 Observed <- c(0.1041878, 0.1016299,0.08859358,0.1159854, 0.08861251,0.1129466,0.1052024,0.1006675,0.1032852,0.09086381,0.1343368,0.1355775,0.1353433,0.1063193,0.1380482,0.1058955,0.104316,0.1028299,0.1345433,0.08819473,0.09158459,0.1330594,0.1366549,0.1072823,0.10504,0.103782)
 Expected <- c(0.10263148,0.10048418,0.08838874,0.11230178,0.08923160,0.11078311,0.10222575,0.09879175,0.10537949,0.08951976,0.13235790,0.13327245,0.13055418,0.10228623,0.13393897,0.10311290,0.10168254,0.10251496,0.13254440,0.08808437,0.08955418,0.13107118,0.13391530,0.10689850,0.10266974,0.10200252)
+populationn <- c("GBR", "FIN", "CHS", "PUR", "CDX", "CLM", "IBS", "PEL", "PJL", "KHV", "ACB", "GWD", "ESN", "BEB", "MSL", "STU", "ITU", "CEU", "YRI", "CHB", "JPT", "LWK", "ASW", "MXL", "TSI", "GIH")
 df <- data.frame(populationn,Observed,Expected)
 print(df)
 combined <- rbind(Observed = df$Observed, Expected = df$Expected)
@@ -272,10 +270,10 @@ else if(grepl("\\.1$", freq_df$Allele[i]))
 total_alt2_freq <- c("-", "-", "0.049836928", "0.003194888", "-", "-", "0.008935703", "-", "-", "-", "-", "-")
 
 # Download raw file (contributing SNPs) from repository
-url <- "https://github.com/yourusername/FOXP2_CNTNAP2_Population_Analysis/releases/download/v1.0/contrib_indels.vcf.gz"
+url <- "https://github.com/evalysiova/FOXP2_CNTNAP2_Population_Analysis/releases/download/v1.0/contrib_indels.vcf.gz"
 download.file(url, destfile = file.path("data", "raw", "contrib_indels.vcf.gz"))
 
-contrib_vcf <- read.vcfR(file.path("data", "raw", "contrib_indels.vcf.gz")
+contrib_vcf <- read.vcfR(file.path("data", "raw", "contrib_indels.vcf.gz"))
 ref_alleles <- getREF(contrib_vcf)
 alt_all <- getALT(contrib_vcf)
 
@@ -414,8 +412,8 @@ ho_long <- Ho_total %>% pivot_longer(cols = -SNP, names_to = "Population", value
 correlation <- left_join(ho_long, fst_long, by = c("Population"))
 correl_results <- correlation |> summarise(rho = cor(Ho, mean_Fst, method = "spearman", use = "complete.obs"), p_val = cor.test(Ho, mean_Fst, method = "spearman", exact = FALSE)$p.value, .groups = "drop") |> mutate (significant = ifelse(p_val <- 0.05, "*", "ns"))
 
-pdf(file.path("output_snps", "figures", "Fst_Ho_correlation_indels.pdf"))
-ggplot(correlation, aes(x = Ho, y = mean_Fst, color = Superpopulation, label = Population)) +
+pdf(file.path("output_indels", "figures", "Fst_Ho_correlation_indels.pdf"))
+ggplot(correlation, aes(x = Ho, y = mean_Fst, label = Population)) +
   geom_point(size = 3, alpha = 0.8) +
   geom_smooth(method = "lm", se = TRUE, color = "grey40", linetype = "dashed", linewidth = 0.7) +
   ggrepel::geom_text_repel(size = 2.5, max.overlaps = 15) +
