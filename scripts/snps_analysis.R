@@ -1,4 +1,5 @@
 # Download raw file from repository
+dir.create(file.path("data", "raw"), recursive = TRUE)
 url <- "https://github.com/evalysiova/FOXP2_CNTNAP2_Population_Analysis/releases/download/v1.0/all-snps.vcf.gz"
 download.file(url, destfile = file.path("data", "raw", "all-snps.vcf.gz"))
 
