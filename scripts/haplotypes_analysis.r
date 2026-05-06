@@ -445,7 +445,7 @@ ggplot(freq_contr_long_loc1, aes(x = pop, y = freq, group = hap, color = hap)) +
    scale_color_manual(values = haplo_palette) +
    theme_minimal() +
    theme(axis.text.x = element_text(angle = 90, hjust = 1))+
-   	   annotate("rect", xmin = 0.5,  xmax = 7.5, ymin = -Inf, ymax = Inf, fill = "#E69F00", alpha = 0.07) +
+   	   annotate("rect", xmin = 0.5, xmax = 7.5, ymin = -Inf, ymax = Inf, fill = "#E69F00", alpha = 0.07) +
        annotate("rect", xmin = 7.5, xmax = 12.5, ymin = -Inf, ymax = Inf, fill = "#0072B2", alpha = 0.07) +
        annotate("rect", xmin = 12.5, xmax = 17.5, ymin = -Inf, ymax = Inf, fill = "#009E73", alpha = 0.07) +
        annotate("rect", xmin = 17.5, xmax = 21.5, ymin = -Inf, ymax = Inf, fill = "#D55E00", alpha = 0.07) +
@@ -455,10 +455,9 @@ ggplot(freq_contr_long_loc1, aes(x = pop, y = freq, group = hap, color = hap)) +
       annotate("text", x = 15, y = Inf, label = "EAS", vjust = 2, fontface = "bold", size = 3.5, color = "#009E73") +
       annotate("text", x = 20, y = Inf, label = "AMR", vjust = 2, fontface = "bold", size = 3.5, color = "#D55E00") +
       annotate("text", x = 24, y = Inf, label = "SAS", vjust = 2, fontface = "bold", size = 3.5, color = "#CC79A7") +
-  
       facet_wrap(~hap, scales = "free_y") +
       labs(title = "Contributing Haplotype Frequencies - Locus 1", subtitle = "Organised by superpopulation",
-           x = "Population", y = "Frequency", fill = "Superpopulation") +
+            x = "Population", y = "Frequency", fill = "Superpopulation") +
       theme_minimal() +
       theme(axis.text.x = element_text(angle = 45, hjust = 1, size = 7), plot.title = element_text(face = "bold"),
             plot.subtitle = element_text(color = "grey40"), legend.position = "bottom")
@@ -495,19 +494,15 @@ for(r in seq_along(r_dfs))
    for(l in seq_along(haplos_i))
       {haplo0 <- strsplit((haplos_i), "")[[l]]
        mat <- matrix(ncol = length(haplo0), nrow = 2)
-       mat[1, ] <- r_df[,1]
-       mat[2, ] <- haplo0
+       mat[1, ] <- r_df[,1]; mat[2, ] <- haplo0
        for(y in 1:ncol(mat))
           {id <- mat[1, y]
            ref <- r_df$REF[r_df$VAR == id][1]
            alt <- r_df$ALT[r_df$VAR == id][1]
            alt2 <- r_df$ALT2[r_df$VAR == id][1]
-           if(mat[2, y] == "0")
-              {mat[2, y] <- ref}
-           else if(mat[2, y] == "1")
-              {mat[2, y] <- alt}
-           else if(mat[2, y] == "2")
-              {mat[2, y] <- alt2}
+           if(mat[2, y] == "0")    {mat[2, y] <- ref}
+           else if(mat[2, y] == "1")    {mat[2, y] <- alt}
+           else if(mat[2, y] == "2")    {mat[2, y] <- alt2}
           }
     temp_matrix <- mat[2, ]
     temp_string <- paste(temp_matrix, collapse = "")
@@ -610,30 +605,29 @@ colors_l3.2 <- setNames(c("hap1" = "royalblue4", "hap2" = "skyblue", "hap3" = "r
 
 color_groups <- list(colors_l1.2, colors_l2.2, colors_l3.2)
 
-# Contributing haplotypes per region from haplo_seq_df
-for (i in 1:3) {
-  coords_i <- coords_per_region[[i]]
-  var_i <- var_per_region[[i]]
-  hap_names <- paste0("hap", seq_len(nrow(coords_i)))
-  contributing <- contributing_per_region[[i]]
-  contrib_colors <- color_groups[[i]]
-  point_colors <- rep("gray40", length(hap_names))
-  names(point_colors) <- hap_names
-  point_colors[contributing] <- contrib_colors[contributing]
-  point_colors_hex <- sapply(point_colors, col2hex)
+# Contributing haplotypes per region
+for (i in 1:3) 
+{coords_i <- coords_per_region[[i]]
+ var_i <- var_per_region[[i]]
+ hap_names <- paste0("hap", seq_len(nrow(coords_i)))
+ contributing <- contributing_per_region[[i]]
+ contrib_colors <- color_groups[[i]]
+ point_colors <- rep("gray40", length(hap_names))
+ names(point_colors) <- hap_names
+ point_colors[contributing] <- contrib_colors[contributing]
+ point_colors_hex <- sapply(point_colors, col2hex)
   
-  fig <- plot_ly()
-  
-  for (j in seq_len(nrow(coords_i))) {
-    fig <- fig %>% add_trace(type = "scatter3d", mode = "markers", x = coords_i[j, 1], 
+ fig <- plot_ly()
+  for (j in seq_len(nrow(coords_i))) 
+  {fig <- fig %>% add_trace(type = "scatter3d", mode = "markers", x = coords_i[j, 1], 
            y = coords_i[j, 2], z = coords_i[j, 3], text = hap_names[j], hoverinfo = "text",
            marker = list(color = point_colors_hex[j], 
            size = ifelse(hap_names[j] %in% contributing, 7, 4)), showlegend = FALSE)
   }
 
   contrib_idx <- which(hap_names %in% contributing)
-  for (j in contrib_idx) {
-    col_rgb <- col2rgb(point_colors[j])
+  for (j in contrib_idx) 
+  {col_rgb <- col2rgb(point_colors[j])
     fill_color <- sprintf("rgba(%d,%d,%d,0.7)", col_rgb[1], col_rgb[2], col_rgb[3])
     fig <- fig %>% add_trace(type = "scatter3d", mode = "markers",
       x = coords_i[j, 1], y = coords_i[j, 2], z = coords_i[j, 3], text = hap_names[j], hoverinfo = "text", 
@@ -642,16 +636,15 @@ for (i in 1:3) {
 
   fig <- fig %>% layout(
     title = paste("Locus", i),
-    scene = list(
-      xaxis = list(title = paste0("PCoA1 (", round(var_i[1], 1), "%)")),
-      yaxis = list(title = paste0("PCoA2 (", round(var_i[2], 1), "%)")),
-      zaxis = list(title = paste0("PCoA3 (", round(var_i[3], 1), "%)"))))
+    scene = list(xaxis = list(title = paste0("PCoA1 (", round(var_i[1], 1), "%)")),
+                 yaxis = list(title = paste0("PCoA2 (", round(var_i[2], 1), "%)")),
+                 zaxis = list(title = paste0("PCoA3 (", round(var_i[3], 1), "%)"))))
   print(fig)
 
 }
 
-for (i in 1:3) {
-  coords_i <- coords_per_region[[i]]
+for (i in 1:3) 
+{coords_i <- coords_per_region[[i]]
   var_i <- var_per_region[[i]]
   hap_names <- paste0("hap", seq_len(nrow(coords_i)))
   contributing <- contributing_per_region[[i]]
@@ -670,16 +663,13 @@ for (i in 1:3) {
        xlim = range(coords_i[, 1]) * 1.3,
        ylim = range(coords_i[, 2]) * 1.3)
   
-  # Highlight contributing haplotypes
   contrib_idx <- which(hap_names %in% contributing)
   points(coords_i[contrib_idx, 1], coords_i[contrib_idx, 2],
          pch = 19, col = point_colors_hex[contrib_idx], cex = 1.5)
-  
-  # Add halo around contributing
+
   points(coords_i[contrib_idx, 1], coords_i[contrib_idx, 2],
          pch = 21, col = point_colors_hex[contrib_idx],
          bg = NA, cex = 2.5, lwd = 1.5)
-  
   abline(h = 0, v = 0, lty = 2, col = "grey70")
 }
 
