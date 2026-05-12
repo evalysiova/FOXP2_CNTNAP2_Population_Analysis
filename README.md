@@ -37,13 +37,13 @@ https://www.internationalgenome.org/data-portal/data-collection/phase3
 │   ├── snps_analysis.R
 │   ├── indels_analysis.R
 │   ├── haplotypes_analysis.r
-│   ├── LD_trait_locus.R
+│   └── LD_trait_locus.R
 ├── preprocessing_scripts/
 │   ├──
 ├── data
-│   ├── raw
+│   └── raw
 ├── output_snps
-│   ├── figures
+│   └── figures
 ├── output_indels
 │   └── figures
 └── output_LD
