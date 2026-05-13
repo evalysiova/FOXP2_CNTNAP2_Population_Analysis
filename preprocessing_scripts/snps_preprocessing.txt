@@ -1,0 +1,42 @@
+# Download the raw data from 1000 Genomes Project (GRCh37 version).
+# wget ftp://ftp.1000genomes.ebi.ac.uk/vol1/ftp/release/20130502/ALL.chr7.phase3_shapeit2_mvncall_integrated_v5b.20130502.genotypes.vcf.gz
+# wget ftp://ftp.1000genomes.ebi.ac.uk/vol1/ftp/release/20130502/ALL.chr7.phase3_shapeit2_mvncall_integrated_v5b.20130502.genotypes.vcf.gz.tbi
+
+# Keep regions of interest (FOXP2 & CNTNAP2 coordinates - GRCh37)
+# Split coordinates of CNTNAP2 in two parts for easier handling.
+
+bcftools view -r 7:113721382-114338820 ALL.chr7.phase3_shapeit2_mvncall_integrated_v5b.20130502.genotypes.vcf.gz -Oz -o foxp2.vcf.gz
+bcftools view -r 7:145808893-146966028 ALL.chr7.phase3_shapeit2_mvncall_integrated_v5b.20130502.genotypes.vcf.gz -Oz -o cntnap2.1.vcf.gz
+bcftools view -r 7:146966029-148123090 ALL.chr7.phase3_shapeit2_mvncall_integrated_v5b.20130502.genotypes.vcf.gz -Oz -o cntnap2.2.vcf.gz
+
+#keep only snps
+bcftools view -v snps foxp2.vcf.gz -o foxp2_snps.vcf.gz
+bcftools view -v snps cntnap2.1.vcf.gz -o cntnap2.1_snps.vcf.gz
+bcftools view -v snps cntnap2.2.vcf.gz -o cntnap2.2_snps.vcf.gz
+
+# Please convert the files manually to GRCh38 (eg. Assembly Converter, Ensembl).
+# Converted to GRCh38 => snps-lifted.vcf
+# Merge files
+
+bcftools concat foxp2_snps-lifted.vcf cntnap2.1_snps-lifted.vcf cntnap2.2_snps-lifted.vcf -Oz -o snps-lifted.vcf
+bgzip snps-lifted.vcf
+tabix -p vcf snps-lifted.vcf.gz
+
+# Extract variants (without IDs).
+
+bcftools query -f '%CHROM\t%POS\t%REF\t%ALT\n' snps-lifted.vcf > variants_snps.txt
+
+# Annotate variants with IDs. The metadata were obtained from NCBI and an processed file is available in the repository.
+
+bgzip matched_lines1.2.txt
+tabix -s1 -b2 -e2 matched_lines1.2.txt.gz
+bcftools annotate -a matched_lines1.2.txt.gz -c CHROM,POS,ID -o all-snps.vcf -Oz snps-lifted.vcf.gz
+
+# Check variants of given dataset.
+
+bcftools view -H all-snps.vcf | wc -l     # Should be 88219 snps
+bcftools query -f '%CHROM\t%POS\t%ID\t%REF\t%ALT\n' all-snps.vcf > variants2_snps.txt
+
+# Check for multiallelic variants.
+bcftools query -f '%CHROM\t%POS\t%REF\t%ALT\n' all-snps.vcf | awk -F',' '{ if (NF>1) print }' > multiallelic_snps.txt
+wc -l multiallelic_snps.txt     # 342 SNPs
