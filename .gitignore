@@ -1,0 +1,24 @@
+# R
+.Rhistory
+.RData
+.Rproj.user/
+*.RData
+*.rds
+
+# Raw and processed data
+data/processed/*
+data/raw/*
+
+# Output
+output_snps/*
+output_indels/*
+output_haplo/*
+output_LD/*
+
+# Keep folder structure
+!data/raw/.gitkeep
+!output/.gitkeep
+
+# Compressed files
+*.gz
+*.zip
