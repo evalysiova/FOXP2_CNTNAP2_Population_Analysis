@@ -59,6 +59,13 @@ The instructions for the according scripts are availble at PREPROCESSING_WORKFLO
 #### - R Analysis
 All approaches are listed in order and thoroughly explained at WORKFLOW.md of this repository.
 
+All packages versions are recorder in `renv.lock`. The exact environment and version of packages can be restored with:
+
+```r
+install.packages("renv")
+renv::restore()
+```
+
 > Processed VCF files can be directly downloaded through available commands in the R environment.
 > The data can be found locally at generated directory ``data/raw/``.
 > The total dataset constitutes of:
