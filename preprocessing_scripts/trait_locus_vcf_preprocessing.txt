@@ -1,0 +1,34 @@
+# coordinates of interest => 7:114650360-114650428
+# set coordinates => 7:114600360-114800428
+
+# SNPs - remove INDELs residues
+bgzip all-snps.vcf
+bcftools index all-snps.vcf.gz
+bcftools view -r 7:114600360-114800428 all-snps.vcf.gz -Oz -o temp1.vcf.gz
+bcftools norm -m -any temp1.vcf.gz -Oz -o temp1.2.vcf.gz
+bcftools view -v snps temp1.2.vcf.gz -Oz -o temp1.3.vcf.gz
+bcftools norm -m +any temp1.3.vcf.gz -Oz -o snps.vcf.gz
+
+# INDELS - remove SNPs indels
+
+bgzip all-indels.vcf
+bcftools index all-indels.vcf.gz
+bcftools view -r 7:114630360-114670428 all-indels.vcf.gz -Oz -o temp2.vcf.gz
+bcftools norm -m -any temp2.vcf.gz -Oz -o temp2.2.vcf.gz
+bcftools view -v snps temp2.2.vcf.gz -Oz -o temp2.3.vcf.gz
+bcftools norm -m +any temp2.3.vcf.gz -Oz -o indels.vcf.gz
+
+bcftools index snps.vcf.gz
+bcftools index indels.vcf.gz
+
+# Phase data
+
+java -jar beagle.27Feb25.75f.jar gt=snps.vcf.gz out=merged_phased_t1
+java -jar beagle.27Feb25.75f.jar gt=indels.vcf.gz out=merged_phased_t2
+bcftools index merged_phased_t1.vcf.gz
+bcftools index merged_phased_t2.vcf.gz
+
+bcftools concat merged_phased_t1.vcf.gz merged_phased_t2.vcf.gz -Oz -o temp.vcf.gz
+bcftools sort temp.vcf.gz -Oz -o merged.vcf.gz
+bcftools index merged.vcf.gz
+bcftools filter -i 'MAF > 0.05' merged.vcf.gz -Oz -o common_merged.vcf.gz
