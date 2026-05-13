@@ -1,0 +1,43 @@
+# Set coordinates of interest
+# region 1 => 7:114362480-114650436 / region 2 => 7:147017367-147323381 / region 3 => 7:148057724-148333434
+# +-20kb / region 1 => 7:114342480-114670436 / region 2 => 7:146997367-147343381 / region 3 => 7:148037724-148353434
+
+#subset from all-snps.vcf.gz & all-indels.vcf.gz
+#region 1, 2, 3
+  
+bcftools view -r 7:114342480-114670436,7:146997367-147343381,7:148037724-148353434 all-snps.vcf.gz -Oz -o temp1.vcf.gz
+bcftools view -r 7:114342480-114670436,7:146997367-147343381,7:148037724-148353434 all-indels.vcf.gz -Oz -o temp2.vcf.gz
+
+# remove residues
+# snps
+  
+bcftools norm -m -any temp1.vcf.gz -Oz -o temp1.2.vcf.gz
+bcftools view -v snps temp1.2.vcf.gz -Oz -o temp1.3.vcf.gz
+bcftools norm -m +any temp1.3.vcf.gz -Oz -o snps.vcf.gz
+
+# indels
+  
+bcftools norm -m -any temp2.vcf.gz -Oz -o temp2.2.vcf.gz
+bcftools view -v indels temp2.2.vcf.gz -Oz -o temp2.3.vcf.gz
+bcftools norm -m +any temp2.3.vcf.gz -Oz -o indels.vcf.gz
+
+bcftools index snps.vcf.gz
+bcftools index indels.vcf.gz
+bcftools concat snps.vcf.gz indels.vcf.gz -Oz -o temp.vcf.gz
+bcftools sort temp.vcf.gz -Oz -o merged.vcf.gz
+bcftools index merged.vcf.gz
+
+# wget https://faculty.washington.edu/browning/beagle/beagle.27Feb25.75f.jar
+  
+java -jar beagle.27Feb25.75f.jar gt=merged.vcf.gz out=merged_phased_t
+bcftools index merged_phased_t.vcf.gz
+
+bcftools annotate -a merged.vcf.gz -c INFO merged_phased_t.vcf.gz -Oz -o merged_phased_t2.vcf.gz
+bcftools view merged_phased_t2.vcf.gz | sed 's/AA=\([ACTGactg]\)[^;]*/AA=\U\1/g' | sed 's/AA=[^ACTGactg;][^;]*/AA=./g' | bgzip -c > merged_phased.vcf.gz
+bcftools index merged_phased.vcf.gz
+
+bcftools norm -m -any contr_phased.vcf.gz -o contr_phased_bial.vcf.gz
+
+#keep only contributing
+
+bcftools view -i 'ID=@contrib_ids.txt' merged_phased.vcf.gz -Oz -o contr_phased.vcf.gz
