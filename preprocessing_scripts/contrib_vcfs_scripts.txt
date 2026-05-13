@@ -1,0 +1,7 @@
+# Create vcf files that include only the contributing variants
+
+# SNPs
+bcftools view --include 'ID = @contrib_snps_sorted.txt' all-snps.vcf -Oz -o contrib_snps.vcf
+
+#INDELs
+bcftools view --include 'ID = @contrib_indels.txt' all-indels.vcf -Oz -o contrib_indels.vcf
