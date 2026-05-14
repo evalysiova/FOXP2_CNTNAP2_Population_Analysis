@@ -33,13 +33,19 @@ https://www.internationalgenome.org/data-portal/data-collection/phase3
 ├── README.md
 ├── WORKFLOW.md
 ├── PREPROCESSING_WORKFLOW.md
+├── renv.lock
+├── .gitignore
 ├── scripts/ 
 │   ├── snps_analysis.R
 │   ├── indels_analysis.R
 │   ├── haplotypes_analysis.r
 │   └── LD_trait_locus.R
 ├── preprocessing_scripts/
-│   ├──
+│   ├── snps_preprocessing.txt
+│   ├── indels_preprocessing.txt
+│   ├── contrib_vcfs_script.txt
+│   ├── haplotypes_vcf_preprocessing.txt
+│   └── trait_locus_vcf_preprocessing.txt
 ├── data
 │   └── raw
 ├── output_snps
