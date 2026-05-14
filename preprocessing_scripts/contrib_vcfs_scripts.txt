@@ -1,9 +1,9 @@
 # Create vcf files that include only the contributing variants
 
 # SNPs
-wget https://github.com/evalysiova/FOXP2_CNTNAP2_Population_Analysis/releases/download/v1.0/contrib_snps_sorted.txt
+wget https://github.com/evalysiova/FOXP2_CNTNAP2_Population_Analysis/releases/download/v0.1/contrib_snps_sorted.txt
 bcftools view --include 'ID = @contrib_snps_sorted.txt' all-snps.vcf -Oz -o contrib_snps.vcf
 
 #INDELs
-wget https://github.com/evalysiova/FOXP2_CNTNAP2_Population_Analysis/releases/download/v1.0/contrib_indels.txt
+wget https://github.com/evalysiova/FOXP2_CNTNAP2_Population_Analysis/releases/download/v0.1/contrib_indels.txt
 bcftools view --include 'ID = @contrib_indels.txt' all-indels.vcf -Oz -o contrib_indels.vcf
