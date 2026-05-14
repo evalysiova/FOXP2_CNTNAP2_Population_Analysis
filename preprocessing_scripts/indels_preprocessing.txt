@@ -19,6 +19,7 @@ bcftools query -f '%CHROM\t%POS\t%REF\t%ALT\n' indels-lifted.vcf > variants.txt
 
 # Annotate variants with IDs. The metadata were obtained from NCBI and an processed file is available in the repository.
 
+wget https://github.com/evalysiova/FOXP2_CNTNAP2_Population_Analysis/releases/download/v1.0/matched_lines2.2.txt
 bgzip matched_lines2.2.txt
 tabix -s1 -b2 -e2 matched_lines2.2.txt.gz
 bcftools annotate -a matched_lines2.2.txt.gz -c CHROM,POS,ID -o all-indels.vcf -Oz indels-lifted.vcf
