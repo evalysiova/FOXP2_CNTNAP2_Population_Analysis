@@ -40,4 +40,5 @@ bcftools norm -m -any contr_phased.vcf.gz -o contr_phased_bial.vcf.gz
 
 #keep only contributing
 
+wget https://github.com/evalysiova/FOXP2_CNTNAP2_Population_Analysis/releases/download/v1.0/contrib_ids.txt
 bcftools view -i 'ID=@contrib_ids.txt' merged_phased.vcf.gz -Oz -o contr_phased.vcf.gz
